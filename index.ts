@@ -3,7 +3,6 @@ import dotenv from "dotenv"
 
 import { playThemeSong } from "./playThemeSong"
 import { listener } from "./listener"
-import { insertThemeSong } from "./insertThemeSong"
 const client = new DiscordJS.Client({
   // tells discord what your bot intends to use and the information it needs such as reactions
   intents: [

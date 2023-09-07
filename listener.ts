@@ -1,12 +1,10 @@
 import { Client } from "discord.js"
 import fs from "fs"
 import request from "request"
-import { insertThemeSong } from "./insertThemeSong"
 export const listener = (client: Client) => {
   client.on("messageCreate", async (msg) => {
     if (msg.content === "$themesong") {
       // time is in milliseconds, so 5000 ms is equal to 5 seconds
-      console.log(msg)
       if (!msg.author.bot) {
         if (
           [...msg.attachments][0] &&
@@ -22,9 +20,10 @@ export const listener = (client: Client) => {
                 console.log(err)
               })
               .pipe(mp3)
-            insertThemeSong(msg.author.id, name)
             msg.channel.send(
-              `New theme song added for ${await getUser(msg.author.id, client)}`
+              `New theme song added for ${
+                (await client.users.fetch(msg.author.id)).username
+              }`
             )
 
             return
@@ -35,11 +34,6 @@ export const listener = (client: Client) => {
       }
     }
   })
-}
-
-const getUser = async (id: string, client: Client) => {
-  var user = await client.users.fetch(id)
-  return user.username
 }
 
 // const checkVolume = (file) => {

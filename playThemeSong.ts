@@ -6,7 +6,6 @@ import {
   joinVoiceChannel,
 } from "@discordjs/voice"
 import fs from "fs"
-import { userIds } from "./constants"
 import { Client } from "discord.js"
 
 /**
@@ -21,25 +20,29 @@ import { Client } from "discord.js"
  */
 
 export const playThemeSong = (client: Client) => {
-  client.on("voiceStateUpdate", (oldMember, newMember) => {
+  client.on("voiceStateUpdate", async (oldMember, newMember) => {
     let channel = newMember.channel
     // only play when a user joins the chat, not when you mute or deafen
     if (channel !== null && channel.isVoice) {
-      var themeSongs: { id: string; fileName: string }[]
-      var data = fs.readFileSync("./data/themeSongs.json", "utf-8")
-      themeSongs = Array.from(JSON.parse(data))
-      for (const users of themeSongs) {
-        if (
-          users.id === newMember.member.user.id &&
-          oldMember.channelId === null
-        ) {
-          try {
-            const audioPlayer = createAudioPlayer()
-            const resource = createAudioResource(
-              // need npm i ffmpeg-static to read audio files or something
+      var user = await client.users.fetch(oldMember.member.user.id)
+      if (
+        user.id === newMember.member.user.id &&
+        oldMember.channelId === null &&
+        !newMember.member.user.bot
+      ) {
+        try {
+          const audioPlayer = createAudioPlayer()
+          // fails when trying to join without a themesong, should just work fine and not have the bot join
+          // if readFile finds nothing, return
+          var readFile = fs.createReadStream(
+            `./data/mp3s/${user.id}-themeSong.mp3`
+          )
 
-              fs.createReadStream(`./data/mp3s/${users.fileName}`)
-            )
+          const resource = createAudioResource(
+            // need npm i ffmpeg-static to read audio files or something
+            readFile
+          )
+          readFile.on("ready", () => {
             const connection = joinVoiceChannel({
               channelId: newMember.member.voice.channelId,
               guildId: newMember.member.guild.id,
@@ -48,17 +51,19 @@ export const playThemeSong = (client: Client) => {
             })
 
             audioPlayer.play(resource)
+
             connection.subscribe(audioPlayer)
+
             audioPlayer.on(AudioPlayerStatus.Idle, () => {
               connection.disconnect()
               connection.destroy()
             })
-          } catch (err) {
-            console.log("themesong broke?")
-            console.log(err)
-          }
-          return
+          })
+        } catch (err) {
+          console.log("themesong broke?")
+          console.log(err)
         }
+        return
       }
     }
   })
