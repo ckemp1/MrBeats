@@ -22,7 +22,7 @@ export const listener = (client: Client) => {
               })
               .pipe(mp3)
 
-            execSync(`py ./normalizeSound.py ./data/mp3s/${name}`)
+            execSync(`python ./normalizeSound.py ./data/mp3s/${name}`)
 
             msg.channel.send(
               `New theme song added for ${
