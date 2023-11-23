@@ -1,6 +1,7 @@
 import { Client } from "discord.js"
 import fs from "fs"
 import request from "request"
+import { execSync } from "child_process"
 export const listener = (client: Client) => {
   client.on("messageCreate", async (msg) => {
     if (msg.content === "$themesong") {
@@ -20,6 +21,9 @@ export const listener = (client: Client) => {
                 console.log(err)
               })
               .pipe(mp3)
+
+            execSync(`py ./normalizeSound.py ./data/mp3s/${name}`)
+
             msg.channel.send(
               `New theme song added for ${
                 (await client.users.fetch(msg.author.id)).username
@@ -35,9 +39,3 @@ export const listener = (client: Client) => {
     }
   })
 }
-
-// const checkVolume = (file) => {
-//   var music = new Audio()
-
-//   return music
-// }
