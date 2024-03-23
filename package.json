@@ -6,6 +6,11 @@
     "request": "^2.88.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.23.9",
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "@babel/preset-typescript": "^7.23.3",
+    "@types/request": "^2.48.12",
     "nodemon": "^2.0.22",
     "typescript": "^5.0.4"
   },
@@ -13,8 +18,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.ts"
+    "start": "sh ./scripts/dev/checkFileExists.sh && node ./lib/index.js",
+    "build": "babel src --extensions .ts --out-dir lib",
+    "dev": "nodemon index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
