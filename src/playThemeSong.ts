@@ -7,6 +7,7 @@ import {
 } from "@discordjs/voice"
 import fs from "fs"
 import { Client } from "discord.js"
+import { errorHandler } from "./errorHandler"
 
 /**
  * STUFF TO DO
@@ -61,10 +62,11 @@ export const playThemeSong = (client: Client) => {
           })
         } catch (err) {
           console.log("themesong broke?")
-          console.log(err)
+          errorHandler(err)
         }
         return
       }
+    } else {
     }
   })
 }

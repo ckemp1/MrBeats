@@ -18,7 +18,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "sh ./scripts/dev/checkFileExists.sh && node ./lib/index.js",
+    "start": "node ./lib/index.js",
+    "start:build": "sh ./scripts/dev/checkFileExists.sh && node ./lib/index.js",
     "build": "babel src --extensions .ts --out-dir lib",
     "dev": "nodemon index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
