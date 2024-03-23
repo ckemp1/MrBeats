@@ -1,3 +1,6 @@
 node_modules
 package-lock.json
 .env
+normAllThemes.ps1
+lib
+data
