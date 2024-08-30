@@ -1,2 +1,5 @@
-data/
+# Not sure why this is here, comment when testing?
+# data/
+data/dev
+scripts/dev
 node_modules/

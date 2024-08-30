@@ -7,6 +7,7 @@ import {
 } from "@discordjs/voice"
 import fs from "fs"
 import { Client } from "discord.js"
+import { errorHandler } from "./errorHandler"
 
 /**
  * STUFF TO DO
@@ -23,19 +24,22 @@ export const playThemeSong = (client: Client) => {
   client.on("voiceStateUpdate", async (oldMember, newMember) => {
     let channel = newMember.channel
     // only play when a user joins the chat, not when you mute or deafen
-    if (channel !== null && channel.isVoice) {
-      var user = await client.users.fetch(oldMember.member.user.id)
-      if (
-        user.id === newMember.member.user.id &&
-        oldMember.channelId === null &&
-        !newMember.member.user.bot
-      ) {
-        try {
+    try {
+      if (channel !== null && channel.isVoice) {
+        var user = await client.users.fetch(oldMember.member.user.id)
+        if (
+          user.id === newMember.member.user.id &&
+          oldMember.channelId === null &&
+          !newMember.member.user.bot
+        ) {
+          let songDir =
+            process.env.NODE_ENV === "dev" ? "./data/dev/mp3s" : "./data/mp3s"
+
           const audioPlayer = createAudioPlayer()
           // fails when trying to join without a themesong, should just work fine and not have the bot join
           // if readFile finds nothing, return
           var readFile = fs.createReadStream(
-            `./data/mp3s/${user.id}-themeSong.mp3`
+            `${songDir}/${user.id}-themeSong.mp3`
           )
 
           const resource = createAudioResource(
@@ -59,12 +63,11 @@ export const playThemeSong = (client: Client) => {
               connection.destroy()
             })
           })
-        } catch (err) {
-          console.log("themesong broke?")
-          console.log(err)
+          return
         }
-        return
       }
+    } catch (err) {
+      errorHandler(err.toString())
     }
   })
 }

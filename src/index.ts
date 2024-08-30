@@ -9,6 +9,7 @@ dotenv.config()
 client.on("ready", () => {
   client.user!!.setActivity("I can hear you")
   console.log("bot is ready!")
+  if (process.env.NODE_ENV == "dev") console.log("running in dev mode")
   listener(client)
 
   playThemeSong(client)
