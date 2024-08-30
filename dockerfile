@@ -4,6 +4,5 @@ WORKDIR /bot
 COPY . /bot
 RUN apk add ffmpeg python3 py3-pip 
 RUN pip install pydub --break-system-packages
-RUN npm install
-RUN npm run build
-CMD npm run start 
+RUN npm install --omit=dev
+ENTRYPOINT npm run start 
