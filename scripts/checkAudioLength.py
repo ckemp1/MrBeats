@@ -7,14 +7,14 @@ if len(sys.argv) == 1:
     print("No argument given!")
     sys.exit()
 try :
-    max_db = -20
     sound = AudioSegment.from_file(sys.argv[1], format="mp3")
 
-    new_db = max_db - sound.max_dBFS
-
-    new_sound = sound.apply_gain(new_db)
-    new_sound.export(sys.argv[1], format="mp3")
-    print(sound.duration_seconds)   
+    length = sound.duration_seconds
+    if length < 7:
+        print(length)
+    else:
+        print("Gah damn it bobby, the mp3 file needs to be less than 7 seconds long, yours is " + length + " seconds!")
+ 
 
 except:
     print("Failed to normalize given file: " + sys.argv[1])
