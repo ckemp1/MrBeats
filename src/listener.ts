@@ -1,27 +1,31 @@
 import { Client } from "discord.js"
 import fs from "fs"
-import request from "request"
+import { Readable } from "node:stream"
 import { spawn } from "child_process"
 import { errorHandler } from "./errorHandler"
 export const listener = (client: Client) => {
   client.on("messageCreate", async (msg) => {
-    if (msg.content === "$themesong") {
+    if (msg.content.includes("$themesong")) {
       // time is in milliseconds, so 5000 ms is equal to 5 seconds
       if (!msg.author.bot) {
+        const attachments = [...msg.attachments][0]
         if (
-          [...msg.attachments][0] &&
-          [...msg.attachments][0][1]["contentType"] === "audio/mpeg" &&
-          [...msg.attachments][0][1]["size"] <= 300000
+          attachments[1] &&
+          attachments[1]["contentType"] === "audio/mpeg3"
+          // TODO get the actual length of the mp3 file, size != audio length
+          // [...msg.attachments][0][1]["size"] <= 300000
         ) {
           const songName = `${msg.author.id}-themeSong.mp3`
           try {
             const mp3 = fs.createWriteStream(`./data/mp3s/${songName}`)
-            request
-              .get([...msg.attachments][0][1]["url"])
-              .on("error", (error) => {
-                errorHandler(error.message)
-              })
-              .pipe(mp3)
+            const data = await fetch(attachments[1]["url"])
+
+            if (!data.ok) {
+              errorHandler(`Error alert: ${data.statusText}`)
+            }
+
+            // TODO data.body typing mismatch
+            Readable.fromWeb(data.body as any).pipe(mp3)
             // const execute = async (command: string) => await new Promise(resolve => exec(command, resolve))
             // const result = await execute(`my command`);
 
@@ -48,11 +52,13 @@ export const listener = (client: Client) => {
             msg.channel.send(
               `New theme song added for ${
                 (await client.users.fetch(msg.author.id)).username
-              }`
+              }`,
             )
           } catch (error) {
             errorHandler(`Error alert: ${error}`)
           }
+        } else {
+          msg.channel.send("The provided file is not an mp3")
         }
       }
     }

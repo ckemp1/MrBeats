@@ -6,8 +6,8 @@ import { client } from "./client"
 
 dotenv.config()
 
-client.on("ready", () => {
-  client.user!!.setActivity("I can hear you")
+client.on("clientReady", () => {
+  client.user!!.setActivity("Finally fixing this, or at least trying to")
   console.log("bot is ready!")
   listener(client)
 

@@ -23,7 +23,7 @@ export const playThemeSong = (client: Client) => {
   client.on("voiceStateUpdate", async (oldMember, newMember) => {
     let channel = newMember.channel
     // only play when a user joins the chat, not when you mute or deafen
-    if (channel !== null && channel.isVoice) {
+    if (channel !== null && channel.isVoiceBased) {
       var user = await client.users.fetch(oldMember.member.user.id)
       if (
         user.id === newMember.member.user.id &&
